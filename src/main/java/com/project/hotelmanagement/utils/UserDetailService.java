@@ -1,5 +1,7 @@
 package com.project.hotelmanagement.utils;
 
+import com.project.hotelmanagement.exception.AppException;
+import com.project.hotelmanagement.exception.ErrorCode;
 import com.project.hotelmanagement.models.User;
 import com.project.hotelmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,6 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new BadCredentialsException("username not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
     }
 }

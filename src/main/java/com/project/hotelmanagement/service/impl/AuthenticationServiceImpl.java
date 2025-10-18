@@ -21,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.project.hotelmanagement.enums.UserStatus.BLOCK;
-import static com.project.hotelmanagement.enums.UserStatus.INACTIVE;
+import static com.project.hotelmanagement.enums.UserStatus.*;
 import static com.project.hotelmanagement.exception.ErrorCode.*;
 
 ;
@@ -44,7 +43,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             User user = userRepository.findByUsername(request.getUsername())
                     .orElseThrow(() -> new AppException(USER_NOT_EXIST));
-
             if (user.getStatus().equals(INACTIVE)) throw new AppException(USER_INACTIVE);
 
             if (user.getStatus().equals(BLOCK)) throw new AppException(USER_BLOCK);
@@ -52,25 +50,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
                 throw new AppException(PASSWORD_INCORRECT);
 
-            Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            log.info("isAuthenticated : {}", authentication.isAuthenticated());
-            log.info("Authorities : {}", authentication.getAuthorities().toString());
+            if (user.getStatus().equals(ACTIVE)) {
+                Authentication authentication = authenticationManager
+                        .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                log.info("isAuthenticated : {}", authentication.isAuthenticated());
+                log.info("Authorities : {}", authentication.getAuthorities().toString());
 
-            authentication.getAuthorities().forEach(auth -> authorities.add(auth.getAuthority()));
-            String accessToken = jwtService.generateToken(user, authorities);
-            String refreshToken = jwtService.refreshToken(user, authorities);
+                authentication.getAuthorities().forEach(auth -> authorities.add(auth.getAuthority()));
+                String accessToken = jwtService.generateToken(user, authorities);
+                String refreshToken = jwtService.refreshToken(user, authorities);
 
-            return AuthenticationResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .roles(authorities)
-                    .build();
-
+                return AuthenticationResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .roles(authorities)
+                        .build();
+            }
         } catch (BadCredentialsException | DisabledException e) {
             log.error("errorMessage: {}", e.getMessage());
             throw new BadCredentialsException(e.getMessage());
         }
-
+        return null;
     }
 }
+
