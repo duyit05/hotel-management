@@ -1,0 +1,25 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: hotel-management
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+jwt:
+  expiry-time: ${EXPIRY_TIME}
+  expiry-day: ${EXPIRY_DAY}
+  secret-key: ${SECRET_KEY}
+  secret-refresh-key: ${SECRET_FRESH_KEY}
