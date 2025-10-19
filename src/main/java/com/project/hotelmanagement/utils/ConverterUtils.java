@@ -1,8 +1,11 @@
 package com.project.hotelmanagement.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+@Component
 public class ConverterUtils {
     public static byte[] readBytesFromInputStream(InputStream inputStream, int length) {
         try {

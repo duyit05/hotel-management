@@ -19,5 +19,6 @@ public class UserResponse {
     private String phoneNumber;
     private GenderType gender;
     private Date dateOrBirth;
+    private String avatar;
 
 }

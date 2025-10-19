@@ -4,6 +4,7 @@ import com.project.hotelmanagement.dto.request.UserRequest;
 import com.project.hotelmanagement.dto.response.UserResponse;
 import com.project.hotelmanagement.enums.UserStatus;
 import com.project.hotelmanagement.exception.AppException;
+import com.project.hotelmanagement.integration.MinioChannel;
 import com.project.hotelmanagement.models.Role;
 import com.project.hotelmanagement.models.User;
 import com.project.hotelmanagement.models.UserHasRole;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final MinioChannel minioChannel;
 
     @Override
     public List<UserResponse> getAllUsers() {
@@ -47,6 +49,7 @@ public class UserServiceImpl implements UserService {
                         .email(user.getEmail())
                         .gender(user.getGender())
                         .dateOrBirth(user.getDateOrBirth())
+                        .avatar(user.getAvatar())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -65,6 +68,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.getEmail());
         user.setGender(request.getGender());
         user.setDateOrBirth(request.getDateOrBirth());
+        user.setAvatar(minioChannel.update(request.getAvatar()));
 
         Role role = roleRepository.findByRoleName(String.valueOf(USER))
                 .orElseThrow(() -> new AppException(ROLE_NOT_FOUND));
@@ -89,6 +93,7 @@ public class UserServiceImpl implements UserService {
                 .gender(user.getGender())
                 .email(user.getEmail())
                 .dateOrBirth(user.getDateOrBirth())
+                .avatar(user.getAvatar())
                 .build();
     }
 

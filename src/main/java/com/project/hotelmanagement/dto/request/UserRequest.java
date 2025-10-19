@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -44,5 +45,7 @@ public class UserRequest {
     @DateTimeFormat(pattern = "MM/dd/yyyy") // cho form-data
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy") // cho JSON
     private Date dateOrBirth;
+
+    private MultipartFile avatar;
 
 }

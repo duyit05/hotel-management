@@ -69,31 +69,28 @@ public class MinioChannel {
         }
     }
 
-    public String update(final MultipartFile file) throws ServerException, InsufficientDataException,
-            ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException,
-            InvalidResponseException, XmlParserException, InternalException {
+    public String update(final MultipartFile file) {
         log.info("Bucket : {} , file size : {}", BUCKET, file.getSize());
         String fileName = file.getOriginalFilename();
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(BUCKET)
-                            .object(file.getOriginalFilename())
-                            .contentType(Objects.isNull(file.getContentType()) ? "img/png ; img/jpg" : file.getContentType())
+                            .object(fileName)
+                            .contentType(file.getContentType())
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .build());
-        } catch (Exception ex) {
-            log.info("Error saving image \n {}", ex.getMessage());
-            throw new BusinessException("400", "Unable to upload file", ex);
-        }
-        return minioClient.getPresignedObjectUrl(
-                io.minio.GetPresignedObjectUrlArgs.builder()
-                        .method(Method.GET)
-                        .bucket(BUCKET)
-                        .object(fileName)
-                        .build()
 
-        );
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(BUCKET)
+                            .object(fileName)
+                            .build());
+        } catch (Exception ex) {
+            log.error("Failed to upload file to MinIO: {}", ex.getMessage());
+            throw new BusinessException("MINIO_UPLOAD_FAILED", "Cannot upload file", ex);
+        }
     }
 
     public byte[] download(String bucket, String name) {
