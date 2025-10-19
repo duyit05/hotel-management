@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: hotel-management
+  config:
+    import: optional:file:.env[.properties]
 
   datasource:
     url: ${DB_URL}
@@ -22,3 +24,9 @@ jwt:
   expiry-day: ${EXPIRY_DAY}
   secret-key: ${SECRET_KEY}
   secret-refresh-key: ${SECRET_FRESH_KEY}
+
+integration:
+  minio:
+    minioAccessKey: ${MINIO_ACCESS_KEY}
+    minioSecretKey: ${MINIO_SECRET_KEY}
+    minioUrl: ${MINIO_URL}

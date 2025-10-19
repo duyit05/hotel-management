@@ -13,18 +13,17 @@ import com.project.hotelmanagement.repository.UserRepository;
 import com.project.hotelmanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import static com.project.hotelmanagement.exception.ErrorCode.*;
-import static com.project.hotelmanagement.enums.RoleType.*;
-
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.project.hotelmanagement.enums.RoleType.USER;
+import static com.project.hotelmanagement.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final UserHasRoleRepository userRoleRepository;
 
     @Override
     public List<UserResponse> getAllUsers() {
@@ -79,7 +77,6 @@ public class UserServiceImpl implements UserService {
         roles.add(userRoles);
 
         user.setRoles(roles);
-
 
         userRepository.save(user);
 
