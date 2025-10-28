@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,4 +31,6 @@ public class RoomRequest {
 
     @NotNull(message = "TYPE_ID_NOT_NULL")
     private Integer typeId;
+
+    private List<MultipartFile> images;
 }

@@ -1,13 +1,11 @@
 package com.project.hotelmanagement.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.checkerframework.checker.units.qual.C;
 
 @Entity
 @Table(name = "tbl_img")
@@ -16,9 +14,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Image extends AbstractEntity<Integer>{
+
+    @Column(columnDefinition = "TEXT")
     private String url;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
 }

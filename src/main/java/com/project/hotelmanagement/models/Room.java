@@ -26,7 +26,7 @@ public class Room extends AbstractEntity<Integer>{
     @JoinColumn(name = "type_id")
     private Type type;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = {CascadeType.ALL})
     private List<Image> images = new ArrayList<>();
 
 }

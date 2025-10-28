@@ -4,17 +4,20 @@ import com.project.hotelmanagement.dto.request.RoomRequest;
 import com.project.hotelmanagement.dto.response.RoomResponse;
 import com.project.hotelmanagement.exception.AppException;
 import com.project.hotelmanagement.exception.InvalidDataException;
+import com.project.hotelmanagement.integration.MinioChannel;
+import com.project.hotelmanagement.models.Image;
 import com.project.hotelmanagement.models.Room;
 import com.project.hotelmanagement.models.Type;
 import com.project.hotelmanagement.repository.RoomRepository;
 import com.project.hotelmanagement.repository.TypeRepository;
 import com.project.hotelmanagement.service.RoomService;
-import com.project.hotelmanagement.service.TypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,7 @@ import static com.project.hotelmanagement.exception.ErrorCode.TYPE_NOT_FOUND;
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final TypeRepository typeRepository;
+    private final MinioChannel minioChannel;
 
     @Override
     public List<RoomResponse> getRooms() {
@@ -45,16 +49,28 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponse createRoom(RoomRequest request) {
+
+        Type type = typeRepository.findById(request.getTypeId()).orElseThrow(() -> new AppException(TYPE_NOT_FOUND));
+        List<Image> images = new ArrayList<>();
+
         Room room = new Room();
         room.setCode(request.getCode());
         room.setName(request.getName());
         room.setDescription(request.getDescription());
         room.setNumberRoom(request.getNumberRoom());
         room.setAddress(request.getAddress());
-
-        Type type = typeRepository.findById(request.getTypeId()).orElseThrow(() -> new AppException(TYPE_NOT_FOUND));
-
         room.setType(type);
+
+        if(request.getImages() != null && !request.getImages().isEmpty()){
+            for(MultipartFile file : request.getImages()){
+                String url = minioChannel.update(file);
+                Image image = new Image();
+                image.setUrl(url);
+                image.setRoom(room);
+                images.add(image);
+            }
+        }
+        room.setImages(images);
 
         roomRepository.save(room);
 
