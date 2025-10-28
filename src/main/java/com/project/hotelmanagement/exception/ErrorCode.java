@@ -1,5 +1,8 @@
 package com.project.hotelmanagement.exception;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,13 +34,34 @@ public enum ErrorCode {
     // AUTHENTICATION
     PASSWORD_INCORRECT(2001, "Password incorrect", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(2002, "You do not have a permission", HttpStatus.FORBIDDEN),
+    OLD_PASSWORD_INVALID(2003,"Old password invalid", HttpStatus.UNAUTHORIZED),
+    NEW_PASSWORD_NOT_MATCH(2004,"New password not match", HttpStatus.BAD_REQUEST),
 
     // ENUM GENDER TYPE
     VALUE_GENDER_TYPE_INVALID (3001,"Value gender type must contains in (0, 1, 2)", HttpStatus.BAD_REQUEST),
     VALUE_USER_STATUS_INVALID (3002,"Value user status must contains in (0, 1, 2)", HttpStatus.BAD_REQUEST),
 
     // ENUM ROLE TYPE
-    ROLE_NOT_FOUND (4001,"Role not found", HttpStatus.BAD_REQUEST);
+    ROLE_NOT_FOUND (4001,"Role not found", HttpStatus.BAD_REQUEST),
+
+
+    // TYPE
+    TYPE_NOT_FOUND(5001,"Type not found", HttpStatus.BAD_REQUEST),
+    TYPE_INVALID(5002, "Type not be not blank", HttpStatus.BAD_REQUEST),
+    NAME_INVALID(5003, "Name not be not blank", HttpStatus.BAD_REQUEST),
+    AMENITIES_INVALID(5004,"Amenities not be not blank", HttpStatus.BAD_REQUEST),
+    BASIC_PRICE_INVALID(5005,"Basic price must be not null",HttpStatus.BAD_REQUEST),
+    BASIC_PRICE_TO_LOW(5006,"Basic price must greater than 100.000",HttpStatus.BAD_REQUEST),
+    MAX_OCCUPANCY(5007,"Occupancy must be not null", HttpStatus.BAD_REQUEST),
+    MAX_OCCUPANCY_TOO_SMALL(5008,"Occupancy must >= 2", HttpStatus.BAD_REQUEST),
+    MAX_OCCUPANCY_TOO_LARGE(5009,"Occupancy must <= 8", HttpStatus.BAD_REQUEST),
+
+    // ROOM
+    ROOM_NOT_FOUND(6000,"Room not found", HttpStatus.BAD_REQUEST),
+    CODE_INVALID(6001,"Code must not be blank", HttpStatus.BAD_REQUEST),
+    NUMBER_ROOM_INVALID(6002, "Number room must not be blank", HttpStatus.BAD_REQUEST),
+    ROME_NAME_INVALID(6003, "Name must be not blank", HttpStatus.BAD_REQUEST),
+    ADDRES_INVALID(6004,"Addrestt must not be blank", HttpStatus.BAD_REQUEST);
 
 
     int code;

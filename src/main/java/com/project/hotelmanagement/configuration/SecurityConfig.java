@@ -26,7 +26,9 @@ public class SecurityConfig {
     private  final PreFilter preFilter;
     private final String[] WHITE_LIST = {
             "/api/auth/**",
-            "/api/user"
+            "/api/user",
+            "/api/types",
+            "api/rooms"
     };
 
     @Bean

@@ -1,5 +1,6 @@
 package com.project.hotelmanagement.service;
 
+import com.project.hotelmanagement.dto.request.PasswordRequest;
 import com.project.hotelmanagement.dto.request.UserRequest;
 import com.project.hotelmanagement.dto.response.UserResponse;
 import com.project.hotelmanagement.enums.UserStatus;
@@ -21,5 +22,6 @@ public interface UserService {
     void changeStatus (int id, UserStatus status);
 
     UserResponse getMyInfo ();
+    boolean changePassword (PasswordRequest request);
 
 }

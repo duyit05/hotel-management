@@ -1,5 +1,6 @@
 package com.project.hotelmanagement.controller;
 
+import com.project.hotelmanagement.dto.request.PasswordRequest;
 import com.project.hotelmanagement.dto.request.UserRequest;
 import com.project.hotelmanagement.dto.response.ApiResponse;
 import com.project.hotelmanagement.dto.response.UserResponse;
@@ -86,5 +87,15 @@ public class UserController {
                 .message("my info")
                 .result(userService.getMyInfo())
                 .build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/change-password")
+    ApiResponse<?> changePassword (@RequestBody PasswordRequest request){
+            return ApiResponse.builder()
+                    .code(HttpStatus.ACCEPTED.value())
+                    .message("change password success")
+                    .result(userService.changePassword(request))
+                    .build();
     }
 }

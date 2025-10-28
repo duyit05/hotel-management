@@ -1,5 +1,6 @@
 package com.project.hotelmanagement.service.impl;
 
+import com.project.hotelmanagement.dto.request.PasswordRequest;
 import com.project.hotelmanagement.dto.request.UserRequest;
 import com.project.hotelmanagement.dto.response.UserResponse;
 import com.project.hotelmanagement.enums.UserStatus;
@@ -9,11 +10,12 @@ import com.project.hotelmanagement.models.Role;
 import com.project.hotelmanagement.models.User;
 import com.project.hotelmanagement.models.UserHasRole;
 import com.project.hotelmanagement.repository.RoleRepository;
-import com.project.hotelmanagement.repository.UserHasRoleRepository;
 import com.project.hotelmanagement.repository.UserRepository;
+import com.project.hotelmanagement.service.AuthenticationService;
 import com.project.hotelmanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final MinioChannel minioChannel;
+    private final AuthenticationService auth;
+
 
     @Override
     public List<UserResponse> getAllUsers() {
@@ -56,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserRequest request) {
-        if(userRepository.existsByUsername(request.getUsername())){
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(USER_EXISTED);
         }
         User user = new User();
@@ -97,7 +101,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private User findById (int id){
+    private User findById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new AppException(USER_NOT_EXIST));
     }
 
@@ -152,5 +156,27 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .dateOrBirth(user.getDateOrBirth())
                 .build();
+    }
+
+    @Override
+    public boolean changePassword(PasswordRequest request) {
+        try {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            log.info("username: {}", username);
+            User user = auth.findByUsername(username);
+
+            if(!passwordEncoder.matches(request.getOldPassword(),user.getPassword())){
+                throw new AppException(OLD_PASSWORD_INVALID);
+            }
+            if(!request.getNewPassword().equals(request.getNewPasswordRepeat())){
+                throw new AppException(NEW_PASSWORD_NOT_MATCH);
+            }
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+            return true;
+        }catch (BadCredentialsException e){
+            log.error("Error: {}", e.getMessage());
+        }
+        return false;
     }
 }
