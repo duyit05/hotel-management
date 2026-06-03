@@ -34,6 +34,12 @@ public class DatabaseConfig {
                         newRole.setRoleName(String.valueOf(ADMIN));
                         return roleRepository.save(newRole);
                     });
+            Role roleUser = roleRepository.findByRoleName(String.valueOf(USER))
+                    .orElseGet(() -> {
+                        Role newRole = new Role();
+                        newRole.setRoleName(String.valueOf(USER));
+                        return roleRepository.save(newRole);
+                    });
             User user = userRepository.findByUsername("admin")
                     .orElseGet(() -> {
                         User newUser = new User();

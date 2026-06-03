@@ -1,6 +1,7 @@
 package com.project.hotelmanagement.dto.response;
 
 import com.project.hotelmanagement.enums.GenderType;
+import com.project.hotelmanagement.enums.UserStatus;
 import lombok.*;
 
 import java.util.Date;
@@ -23,5 +24,6 @@ public class UserResponse {
     private String rank;
     private String national;
     private String idCard;
+    private UserStatus status;
 
 }

@@ -37,16 +37,14 @@ public class User extends AbstractEntity <Integer> implements UserDetails {
     private String email;
     private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
     private UserRank rank;
 
     private String national;
     private String idCard;
 
-    @Enumerated(EnumType.STRING)
+
     private GenderType gender;
 
-    @Enumerated(EnumType.STRING)
     private UserStatus status;
 
     @Enumerated(EnumType.STRING)

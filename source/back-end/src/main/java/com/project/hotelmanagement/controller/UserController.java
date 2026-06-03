@@ -25,7 +25,6 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping()
     ApiResponse<List<UserResponse>> getAllUsers () {
         return ApiResponse.<List<UserResponse>>builder()

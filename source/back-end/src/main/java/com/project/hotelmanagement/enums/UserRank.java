@@ -1,5 +1,44 @@
 package com.project.hotelmanagement.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.project.hotelmanagement.exception.AppException;
+import lombok.Getter;
+
+import static com.project.hotelmanagement.exception.ErrorCode.VALUE_USER_STATUS_INVALID;
+
+@Getter
 public enum UserRank {
-    STANDARD,GOLD,VIP
+    STANDARD(0, "standard"),
+    GOAL(1, "goal"),
+    VIP(2, "vip");
+
+    private final int code;
+    private final String label;
+
+    UserRank(int code, String label) {
+        this.code = code;
+        this.label = label;
+    }
+
+    @JsonValue
+    public Object getValue() {
+        return code;
+    }
+
+    @JsonCreator
+    public static UserRank from(Object value) {
+        if (value instanceof Number) {
+            int code = ((Number) value).intValue();
+            for (UserRank u : values()) {
+                if (u.code == code) return u;
+            }
+        } else if (value instanceof String) {
+            String text = ((String) value).trim().toLowerCase();
+            for (UserRank u : values()) {
+                if (u.label.equalsIgnoreCase(text)) return u;
+            }
+        }
+        throw new AppException(VALUE_USER_STATUS_INVALID);
+    }
 }

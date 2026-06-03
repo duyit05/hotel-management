@@ -25,7 +25,7 @@ public enum UserStatus {
 
     @JsonValue
     public Object getValue () {
-        return label;
+        return code;
     }
 
     @JsonCreator
