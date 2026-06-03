@@ -1,9 +1,11 @@
 package com.project.hotelmanagement.dto.response;
 
 import com.project.hotelmanagement.enums.GenderType;
+import com.project.hotelmanagement.enums.UserRank;
 import com.project.hotelmanagement.enums.UserStatus;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -19,11 +21,12 @@ public class UserResponse {
     private String email;
     private String phoneNumber;
     private GenderType gender;
-    private Date dateOrBirth;
+    private LocalDate dateOrBirth;
     private String avatar;
-    private String rank;
+    private UserRank rank;
     private String national;
     private String idCard;
     private UserStatus status;
+
 
 }

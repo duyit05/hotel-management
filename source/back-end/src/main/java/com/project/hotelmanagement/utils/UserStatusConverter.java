@@ -21,6 +21,6 @@ public class UserStatusConverter implements AttributeConverter<UserStatus, Integ
         for (UserStatus g : UserStatus.values()) {
             if (g.getCode() == code) return g;
         }
-        throw new AppException(ErrorCode.VALUE_GENDER_TYPE_INVALID);
+        throw new AppException(ErrorCode.VALUE_USER_STATUS_INVALID);
     }
 }

@@ -2,7 +2,9 @@ package com.project.hotelmanagement.service.impl;
 
 import com.project.hotelmanagement.dto.request.PasswordRequest;
 import com.project.hotelmanagement.dto.request.UserRequest;
+import com.project.hotelmanagement.dto.response.PageResponse;
 import com.project.hotelmanagement.dto.response.UserResponse;
+import com.project.hotelmanagement.enums.GenderType;
 import com.project.hotelmanagement.enums.UserRank;
 import com.project.hotelmanagement.enums.UserStatus;
 import com.project.hotelmanagement.exception.AppException;
@@ -15,6 +17,10 @@ import com.project.hotelmanagement.repository.RoleRepository;
 import com.project.hotelmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.project.hotelmanagement.enums.RoleType.USER;
 import static com.project.hotelmanagement.enums.StatusChat.OFFLINE;
@@ -46,8 +54,44 @@ public class UserService {
 
 
     
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+    public PageResponse<?> getAllUsers(int pageNo, int pageSize, String keyword, UserStatus status,
+                                       UserRank rank, GenderType gender, String ...sorts) {
+        int page = pageNo > 0 ? pageNo - 1 : 0;
+        // Xử lý sort
+        List<Sort.Order> orders = new ArrayList<>();
+        if(sorts != null){
+            for (String sortBy : sorts) {
+                Pattern pattern = Pattern.compile("(\\w+?)(:)(.*)");
+                Matcher matcher = pattern.matcher(sortBy);
+                if (matcher.find()) {
+                    String fieldName = matcher.group(1);
+                    String direction = matcher.group(3);
+                    orders.add(new Sort.Order(
+                            direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                            fieldName
+                    ));
+                }
+            }
+        }
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(orders));
+        // Có filter thì searchUsers, không thì findAll
+        Page<User> users;
+        if (keyword != null || status != null || rank != null || gender != null) {
+            users = userRepository.searchUsers(keyword, status, rank, gender, pageable);
+        } else {
+            users = userRepository.findAll(pageable);
+        }
+        List<UserResponse> responses = users.getContent()
+                .stream()
+                .map(userMapper::toUserResponse)
+                .toList();
+
+        return PageResponse.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .totalPage(users.getTotalPages())
+                .items(responses)
+                .build();
     }
 
     

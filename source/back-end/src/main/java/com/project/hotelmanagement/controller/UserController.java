@@ -3,7 +3,10 @@ package com.project.hotelmanagement.controller;
 import com.project.hotelmanagement.dto.request.PasswordRequest;
 import com.project.hotelmanagement.dto.request.UserRequest;
 import com.project.hotelmanagement.dto.response.ApiResponse;
+import com.project.hotelmanagement.dto.response.PageResponse;
 import com.project.hotelmanagement.dto.response.UserResponse;
+import com.project.hotelmanagement.enums.GenderType;
+import com.project.hotelmanagement.enums.UserRank;
 import com.project.hotelmanagement.enums.UserStatus;
 import com.project.hotelmanagement.models.User;
 import com.project.hotelmanagement.service.impl.UserService;
@@ -26,11 +29,17 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping()
-    ApiResponse<List<UserResponse>> getAllUsers () {
-        return ApiResponse.<List<UserResponse>>builder()
+    ApiResponse<?> getAllUsers (@RequestParam(defaultValue = "1") int pageNo,
+                                @RequestParam(defaultValue = "20") int pageSize,
+                                @RequestParam(required = false) String keyword,
+                                @RequestParam(required = false) UserStatus status,
+                                @RequestParam(required = false) UserRank rank,
+                                @RequestParam(required = false) GenderType gender,
+                                @RequestParam(required = false) String... sorts) {
+        return ApiResponse.<PageResponse<?>>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get all users")
-                .result(userService.getAllUsers())
+                .message("Get users")
+                .result(userService.getAllUsers(pageNo,pageSize,keyword,status,rank,gender,sorts))
                 .build();
     }
 

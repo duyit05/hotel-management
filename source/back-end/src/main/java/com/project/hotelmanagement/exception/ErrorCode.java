@@ -47,6 +47,7 @@ public enum ErrorCode {
     // ENUM GENDER TYPE
     VALUE_GENDER_TYPE_INVALID (3001,"Value gender type must contains in (0, 1, 2)", HttpStatus.BAD_REQUEST),
     VALUE_USER_STATUS_INVALID (3002,"Value user status must contains in (0, 1, 2)", HttpStatus.BAD_REQUEST),
+    VALUE_USER_RANK_INVALID (3004,"Value user rank must contains in (0, 1, 2)", HttpStatus.BAD_REQUEST),
 
     // ENUM ROLE TYPE
     ROLE_NOT_FOUND (4001,"Role not found", HttpStatus.BAD_REQUEST),

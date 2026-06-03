@@ -2,6 +2,7 @@ package com.project.hotelmanagement.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.hotelmanagement.enums.GenderType;
+import com.project.hotelmanagement.enums.UserRank;
 import com.project.hotelmanagement.validator.GenderSubset;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static com.project.hotelmanagement.enums.GenderType.*;
@@ -43,10 +45,10 @@ public class UserRequest {
 
     @NotNull(message = "DATE_OR_BIRTH_NOT_NULL")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
-    private Date dateOrBirth;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
+    private LocalDate dateOrBirth;
 
-    private String rank;
+    private UserRank rank;
 
     @NotBlank(message = "NATIONAL_INVALID")
     private String national;
