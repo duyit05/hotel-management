@@ -38,10 +38,8 @@ const openModal = (mode, row = null) => {
     ? 'Chỉnh sửa khách hàng'
     : 'Thêm khách hàng mới'
 
-  modal.data = row
-    ? JSON.parse(JSON.stringify(row))
-    : {}
-
+  modal.data = row ? JSON.parse(JSON.stringify(row)) : {};
+  console.log("Modal: ", modal.data);
   modal.open = true
 }
 
@@ -79,6 +77,19 @@ const convertStatus = (status) => {
       return 'Inactive'
     case 2:
       return 'Block'
+    default:
+      return '-'
+  }
+}
+
+const convertRank = (rank) => {
+  switch (rank) {
+    case 0:
+      return 'Standard'
+    case 1:
+      return 'Goal'
+    case 2:
+      return 'Vip'
     default:
       return '-'
   }
@@ -169,16 +180,17 @@ const saveModal = async () => {
               <div class="form-group">
                 <label class="form-label">Hạng thành viên</label>
                 <select class="form-control" v-model="modal.data.rank">
-                  <option>Standard</option>
-                  <option>Gold</option>
-                  <option>VIP</option>
+                  <option :value="0">Standard</option>
+                  <option :value="1">Gold</option>
+                  <option :value="2">VIP</option>
                 </select>
               </div>
               <div class="form-group">
                 <label class="form-label">Trạng thái</label>
                 <select class="form-control" v-model="modal.data.status">
-                  <option>Hoạt động</option>
-                  <option>Không hoạt động</option>
+                  <option :value="0">Hoạt động</option>
+                  <option :value="1">Không hoạt động</option>
+                  <option :value="2">Khóa</option>
                 </select>
               </div>
             </div>
@@ -273,7 +285,7 @@ const saveModal = async () => {
               </td>
               <td>
                 <span class="badge" :class="tierBadge(c.rank)">
-                  {{ c.rank || '-' }}
+                  {{ convertRank(c.rank) || '-' }}
                 </span>
               </td>
               <td>
