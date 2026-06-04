@@ -56,7 +56,7 @@ public class User extends AbstractEntity <Integer> implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String avatar;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserHasRole> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

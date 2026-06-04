@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.project.hotelmanagement.exception.AppException;
 import lombok.Getter;
 
+import static com.project.hotelmanagement.exception.ErrorCode.VALUE_USER_RANK_INVALID;
 import static com.project.hotelmanagement.exception.ErrorCode.VALUE_USER_STATUS_INVALID;
 
 @Getter
@@ -38,6 +39,13 @@ public enum UserRank {
             for (UserRank u : values()) {
                 if (u.label.equalsIgnoreCase(text)) return u;
             }
+        }
+        throw new AppException(VALUE_USER_RANK_INVALID);
+    }
+
+    public static UserRank fromCode(int code) {
+        for (UserRank u : values()) {
+            if (u.code == code) return u;
         }
         throw new AppException(VALUE_USER_STATUS_INVALID);
     }

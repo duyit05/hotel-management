@@ -15,12 +15,11 @@ import com.project.hotelmanagement.models.User;
 import com.project.hotelmanagement.models.UserHasRole;
 import com.project.hotelmanagement.repository.RoleRepository;
 import com.project.hotelmanagement.repository.UserRepository;
+import com.project.hotelmanagement.repository.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,9 +52,10 @@ public class UserService {
     private final UserMapper userMapper;
 
 
-    
-    public PageResponse<?> getAllUsers(int pageNo, int pageSize, String keyword, UserStatus status,
-                                       UserRank rank, GenderType gender, String ...sorts) {
+
+    public PageResponse<?> getAllUsers(int pageNo, int pageSize, String keyword,
+                                       Integer statusCode, Integer rankCode, Integer genderCode,
+                                       String ...sorts) {
         int page = pageNo > 0 ? pageNo - 1 : 0;
         // Xử lý sort
         List<Sort.Order> orders = new ArrayList<>();
@@ -74,18 +74,26 @@ public class UserService {
             }
         }
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(orders));
-        // Có filter thì searchUsers, không thì findAll
-        Page<User> users;
-        if (keyword != null || status != null || rank != null || gender != null) {
-            users = userRepository.searchUsers(keyword, status, rank, gender, pageable);
-        } else {
-            users = userRepository.findAll(pageable);
-        }
+
+        // Convert Integer -> Enum
+        UserStatus status = statusCode != null ? UserStatus.fromCode(statusCode) : null;
+        UserRank rank = rankCode != null ? UserRank.fromCode(rankCode) : null;
+        GenderType gender = genderCode != null ? GenderType.fromCode(genderCode) : null;
+
+        // Dùng Specification thay vì JPQL query
+        Specification<User> spec = Specification
+                .where(UserSpecification.hasKeyword(keyword))
+                .and(UserSpecification.hasStatus(status))
+                .and(UserSpecification.hasRank(rank))
+                .and(UserSpecification.hasGender(gender));
+
+        Page<User> users = userRepository.findAll(spec, pageable);
+
         List<UserResponse> responses = users.getContent()
                 .stream()
                 .map(userMapper::toUserResponse)
                 .toList();
-
+        int fakeTotalPage = pageNo + (users.hasNext() ? 5 : 1);
         return PageResponse.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)

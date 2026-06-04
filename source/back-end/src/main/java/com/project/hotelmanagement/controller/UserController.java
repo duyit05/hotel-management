@@ -32,9 +32,9 @@ public class UserController {
     ApiResponse<?> getAllUsers (@RequestParam(defaultValue = "1") int pageNo,
                                 @RequestParam(defaultValue = "20") int pageSize,
                                 @RequestParam(required = false) String keyword,
-                                @RequestParam(required = false) UserStatus status,
-                                @RequestParam(required = false) UserRank rank,
-                                @RequestParam(required = false) GenderType gender,
+                                @RequestParam(required = false) Integer status,
+                                @RequestParam(required = false) Integer rank,
+                                @RequestParam(required = false) Integer gender,
                                 @RequestParam(required = false) String... sorts) {
         return ApiResponse.<PageResponse<?>>builder()
                 .code(HttpStatus.OK.value())

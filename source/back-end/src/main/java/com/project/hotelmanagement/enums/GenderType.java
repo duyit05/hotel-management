@@ -6,6 +6,8 @@ import com.project.hotelmanagement.exception.AppException;
 import com.project.hotelmanagement.exception.ErrorCode;
 import lombok.Getter;
 
+import static com.project.hotelmanagement.exception.ErrorCode.VALUE_USER_STATUS_INVALID;
+
 @Getter
 public enum GenderType {
     MALE(0,"male"),
@@ -41,6 +43,13 @@ public enum GenderType {
             }
         }
         throw new AppException(ErrorCode.VALUE_GENDER_TYPE_INVALID);
+    }
+
+    public static GenderType fromCode(int code) {
+        for (GenderType u : values()) {
+            if (u.code == code) return u;
+        }
+        throw new AppException(VALUE_USER_STATUS_INVALID);
     }
 }
 

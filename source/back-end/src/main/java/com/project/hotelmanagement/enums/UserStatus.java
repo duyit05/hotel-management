@@ -29,18 +29,25 @@ public enum UserStatus {
     }
 
     @JsonCreator
-    public static UserStatus from (Object value){
-            if(value instanceof  Number){
-                int code = ((Number) value).intValue();
-                for (UserStatus u : values()){
-                    if (u.code == code) return u;
-                }
-            } else if (value instanceof  String) {
-                String text = ((String) value).trim().toLowerCase();
-                for(UserStatus u : values()){
-                    if (u.label.equalsIgnoreCase(text)) return u;
-                }
+    public static UserStatus from(Object value) {
+        if (value == null) return null;
+        String text = String.valueOf(value).trim();
+        try {
+            int code = Integer.parseInt(text);
+            for (UserStatus u : values()) {
+                if (u.code == code) return u;
             }
-            throw  new AppException(VALUE_USER_STATUS_INVALID);
+        } catch (NumberFormatException ignored) {}
+        for (UserStatus u : values()) {
+            if (u.label.equalsIgnoreCase(text)) return u;
+        }
+        throw new AppException(VALUE_USER_STATUS_INVALID);
+    }
+
+    public static UserStatus fromCode(int code) {
+        for (UserStatus u : values()) {
+            if (u.code == code) return u;
+        }
+        throw new AppException(VALUE_USER_STATUS_INVALID);
     }
 }

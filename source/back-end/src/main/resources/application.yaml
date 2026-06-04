@@ -43,3 +43,6 @@ integration:
     minioAccessKey: minioadmin
     minioSecretKey: minioadmin
     minioUrl: http://localhost:9000
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
